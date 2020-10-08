@@ -4,6 +4,24 @@ RSpec.describe Gofish::Game do
 
   let(:instance) { described_class.new(deck_id: deck_id, players: players) }
 
+  context 'with two players' do
+    let(:players) { %w[tom jerry] }
+
+    describe 'cards per player' do
+      subject { instance.cards_per_player }
+      it { is_expected.to eq(7) }
+    end
+  end
+
+  context 'with four + players' do
+    let(:players) { %w[tom jerry, duffy, bunny] }
+
+    describe do
+      subject { instance.cards_per_player }
+      it { is_expected.to eq(5) }
+    end
+  end
+
   describe '#players' do
     subject { instance.players }
 

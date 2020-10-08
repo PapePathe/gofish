@@ -5,22 +5,16 @@ require 'sinatra'
 require 'sinatra/json'
 require 'singleton'
 
-instance = Gofish::Game.new(deck_id: '', players: [])
 post '/games' do
-  result =
-    RestClient.get(
-      'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1'
-    )
-
-  if result.code.eql?(200)
-    json = JSON.parse(result.body)
-    instance.deck_id = json.fetch('deck_id')
-  end
-
-  instance.players =
+  players =
     params[:players]&.map do |player_name|
       Gofish::Player.new(name: player_name, cards: [])
     end
+
+  instance = Gofish::Game.new(deck_id: '', players: players)
+
+  instance.submit_to_api!
+  instance.distribute_cards!
 
   json({ players: params[:players] })
 end
